@@ -8,21 +8,21 @@
 @theme {
     --font-sans: 'Fredoka', 'Open Sans' 'Nunito', 'Patrick Hand', 'Caveat', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 
-    --color-app-primary: #134556;
-    --color-app-primary-dark: #134556;
-    --color-app-secondary: #1A2B2D;
-    --color-app-tertiary: #7e9294;
+    --color-app-primary: #076091;
+    --color-app-primary-dark: #3065B5;
+
+    --color-app-secondary: #B20026;
+    --color-app-tertiary: #4575BD;
 
     --color-app-surface: #f1f0f0;
     --color-app-muted: #f1f0f0;
-
     --color-app-dark: #0d0d0d;
 
-    --color-app-gradient-1: #8e8b8b;
-    --color-app-gradient-2: #b2b1b1;
+    --color-app-gradient-1: #7FCBD8;
+    --color-app-gradient-2: #076091;
 
-    --color-app-accent-1: #FF8000;
-    --color-app-accent-2: #5E5EF7;
+  --color-app-accent-1: #F4B901;
+  --color-app-accent-2: #7FCBD8;
 }
 
 [x-cloak] {

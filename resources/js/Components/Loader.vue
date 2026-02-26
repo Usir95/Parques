@@ -9,11 +9,11 @@ defineProps<{
         opacity="80%"
         persistent
         :model-value="overlay"
-        class="align-center justify-center"
+        class="justify-center align-center"
     >
         <ScaleLoader
             :loading="overlay"
-            color="#FFA500"
+            color="var(--color-app-primary-dark)"
             height="80px"
             width="30px"
         />

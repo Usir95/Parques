@@ -34,7 +34,7 @@ const initials = computed(() => {
 </script>
 
 <template>
-    <v-app-bar app fixed height="52" elevation="4" class="text-white border-b !bg-app-secondary border-black/10">
+    <v-app-bar app fixed height="52" elevation="4" class="text-white border-b !bg-app-primary border-black/10">
         <!-- Toggle -->
         <v-btn icon variant="text" class="text-white/90 hover:text-white" @click="emit('toggle-drawer')">
             <v-icon>mdi-menu</v-icon>
