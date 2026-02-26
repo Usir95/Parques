@@ -10,7 +10,11 @@ import DateFnsAdapter from "@date-io/date-fns";
 import enUS from "date-fns/locale/en-US";
 import es from "date-fns/locale/es";
 
-export const vuetify = createVuetify({
+function getCssVar(name) {
+    return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+}
+
+const vuetify = createVuetify({
     components: {
         ...components,
         VDateInput,
@@ -25,31 +29,30 @@ export const vuetify = createVuetify({
         locale: { es: es, en: enUS },
     },
     theme: {
-    defaultTheme: "myTheme",
-    themes: {
+        defaultTheme: "myTheme",
+        themes: {
         myTheme: {
-        dark: false,
-        colors: {
-            customPrimary: "#134556",
-            customPrimaryDark: "#134556",
-            customSecondary: "#1A2B2D",
-            customTertiary: "#7e9294",
-            customSurface: "#f1f0f0",
-            customMuted: "#f1f0f0",
-            customDark: "#0d0d0d",
-        },
+            dark: false,
+            colors: {
+            customPrimary: getCssVar("--color-app-primary"),
+            customPrimaryDark: getCssVar("--color-app-primary-dark"),
+            customSecondary: getCssVar("--color-app-secondary"),
+            customTertiary: getCssVar("--color-app-tertiary"),
+            customSurface: getCssVar("--color-app-surface"),
+            customMuted: getCssVar("--color-app-muted"),
+            customDark: getCssVar("--color-app-dark"),
+            },
         },
         myDarkTheme: {
-        dark: true,
-        colors: {
-            customPrimary: "#134556",
-            customSecondary: "#1A2B2D",
-            customSurface: "#0d0d0d",
+            dark: true,
+            colors: {
+            customPrimary: getCssVar("--color-app-primary"),
+            customSecondary: getCssVar("--color-app-secondary"),
+            customSurface: getCssVar("--color-app-dark"),
+            },
         },
         },
     },
-    }
-
 });
 
 export default vuetify;
