@@ -13,7 +13,7 @@ defineProps<{
     >
         <ScaleLoader
             :loading="overlay"
-            color="var(--color-app-primary-dark)"
+            color="var(--color-app-secondary)"
             height="80px"
             width="30px"
         />
