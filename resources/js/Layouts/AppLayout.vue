@@ -37,12 +37,12 @@ const clicStop = (displayMobile: boolean) => {
 
             <TopBar :title="title ?? 'LARAVEL'" @toggle-drawer="clicStop($vuetify.display.mobile)"></TopBar>
 
-            <Navigation :rail="rail" v-model:drawer="drawer" />
+            <!-- <Navigation :rail="rail" v-model:drawer="drawer" /> -->
 
             <v-main>
-                <div class="px-2">
+                <div class="px-2 bg-gradient-to-b from-app-tertiary via-[#076191dc] to-app-primary" style="height: 91vh;">
 
-                    <div class="flex justify-end py-3">
+                    <div class="flex justify-end">
                         <slot name="actions"></slot>
                     </div>
 

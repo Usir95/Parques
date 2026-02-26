@@ -1,134 +1,110 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { email as emailRule } from "@/constants/validationRules";
-import AuthenticationCard from "@/Components/AuthenticationCard.vue";
+// @ts-ignore
 import AuthenticationCardLogo from "@/Components/AuthenticationCardLogo.vue";
-import Checkbox from "@/Components/Checkbox.vue";
-import PasswordField from "@/Components/PasswordField.vue";
-import InputError from "@/Components/InputError.vue";
+// @ts-ignore
+import FormValidate from "@/Components/FormValidate.vue";
+// @ts-ignore
+import MdEmailInput from "@/Components/MaterialDesign/MdEmailInput.vue";
+// @ts-ignore
+import MdPasswordInput from "@/Components/MaterialDesign/MdPasswordInput.vue";
+// @ts-ignore
+import VButton from "@/Components/Vuetify/VButton.vue";
+// @ts-ignore
 import Loader from "@/Components/Loader.vue";
+
 import { isLoading } from "@/loading";
 import { Head, Link, useForm } from "@inertiajs/vue3";
-import { email } from "@/constants/validationRules";
-const formLoginSendRef = ref();
-defineProps({
-    canResetPassword: Boolean,
-    status: String,
-});
+
+const formRef = ref();
+
+defineProps<{
+  canResetPassword: boolean;
+  status?: string;
+}>();
 
 const form = useForm({
-    email: "",
-    password: "",
-    remember: false,
+  email: "",
+  password: "",
+  remember: false,
 });
 
 const submit = () => {
-    formLoginSendRef.value?.validate().then(({ valid: isValid }) => {
-        console.log(isValid);
-        if (!isValid) {
-            return;
-        } else {
-            form.transform((data) => ({
-                ...data,
-                remember: form.remember ? "on" : "",
-            })).post(route("login"), {
-                onFinish: () => form.reset("password"),
-            });
-        }
+    form.transform((data) => ({
+    ...data,
+    remember: form.remember ? "on" : "",
+    }))
+    .post(route("login"), {
+        onFinish: () => form.reset("password"),
     });
 };
 </script>
 
 <template>
-    <Head title="Log in" />
+    <Head title="Iniciar sesión" />
 
-    <AuthenticationCard>
-        <template #logo>
-            <AuthenticationCardLogo />
-        </template>
+    <section class="min-h-screen text-white bg-gradient-to-b from-app-primary via-[#076091] to-[#031826]">
+        <div class="flex items-center justify-center min-h-screen px-4 py-10">
+            <div class="w-full max-w-sm sm:max-w-md">
+                <div class="px-6 py-8 border shadow-xl rounded-xl bg-black/20 backdrop-blur-md">
+                <div class="flex justify-center">
+                    <AuthenticationCardLogo />
+                </div>
 
-        <div
-            v-if="status"
-            class="mb-4 font-medium text-sm text-green-600 dark:text-green-400"
-        >
-            {{ status }}
-        </div>
+                <div class="my-4 text-xl font-bold text-center">
+                    Iniciar sesión
+                </div>
 
-        <v-form @submit.prevent="submit" ref="formLoginSendRef">
-            <div>
-                <!-- <InputLabel for="email" value="Email" /> -->
-                <v-text-field
-                    required
-                    v-model="form.email"
-                    prepend-inner-icon="mdi-email"
-                    label="Correo electrónico"
-                    variant="outlined"
-                    type="email"
-                    :rules="[emailRule]"
-                ></v-text-field>
+                <div
+                    v-if="status"
+                    class="px-4 py-2 mt-4 text-sm border rounded-lg border-emerald-400/40 bg-emerald-500/10 text-emerald-100"
+                >
+                    {{ status }}
+                </div>
 
-                <!-- <TextInput
-                    id="email"
-                    v-model="form.email"
-                    type="email"
-                    class="mt-1 block w-full"
-                    required
-                    autofocus
-                    autocomplete="username"
-                /> -->
-                <InputError class="mt-2" :message="form.errors.email" />
-            </div>
+                <FormValidate ref="formRef" class="mt-6" @submit="submit">
+                    <div class="space-y-4">
+                    <MdEmailInput
+                        v-model="form.email"
+                        name="email"
+                        label="Correo electrónico"
+                        :required="true"
+                        :externalError="form.errors.email"
+                    />
 
-            <div class="mt-4">
-                <!--<v-text-field
-                    required
-                    v-model="form.password"
-                    prepend-inner-icon="mdi-lock"
-                    label="Contraseña"
-                    type="password"
-                    variant="outlined"
-                ></v-text-field>-->
-                <PasswordField v-model="form.password" label="Contraseña" />
-                <!-- <InputLabel for="password" value="Password" />
-                <TextInput
-                    id="password"
-                    v-model="form.password"
-                    type="password"
-                    class="mt-1 block w-full"
-                    required
-                    autocomplete="current-password"
-                /> -->
-                <InputError class="mt-2" :message="form.errors.password" />
-            </div>
+                    <MdPasswordInput
+                        v-model="form.password"
+                        name="password"
+                        label="Contraseña"
+                        :required="true"
+                        :externalError="form.errors.password"
+                        :hideToggle="true"
+                    />
+                    </div>
 
-            <div class="block mt-4">
-                <label class="flex items-center">
-                    <Checkbox v-model:checked="form.remember" name="remember" />
-                    <span class="ms-2 text-sm text-gray-600 dark:text-gray-400"
-                        >Remember me</span
+                    <div class="flex items-center justify-between mt-3">
+                    <Link
+                        v-if="canResetPassword"
+                        :href="route('password.request')"
+                        class="text-sm underline text-white/80 hover:text-white underline-offset-4"
                     >
-                </label>
-            </div>
+                        ¿Olvidaste tu contraseña?
+                    </Link>
+                    </div>
 
-            <div class="flex items-center justify-end mt-4">
-                <Link
-                    v-if="canResetPassword"
-                    :href="route('password.request')"
-                    class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800"
-                >
-                    Forgot your password?
-                </Link>
-
-                <!-- <PrimaryButton
-                    class="ms-4"
-                    :class="{ 'opacity-25': form.processing }"
+                    <VButton
+                    type="submit"
+                    class="w-full mt-6 font-bold rounded-full"
+                    color="#B20026"
                     :disabled="form.processing"
-                >
-                    Log in
-                </PrimaryButton> -->
-                <v-btn type="submit" prepend-icon="mdi-login"> Ingresar </v-btn>
+                    >
+                    Ingresar
+                    </VButton>
+                </FormValidate>
+                </div>
             </div>
-        </v-form>
-        <Loader :overlay="isLoading" />
-    </AuthenticationCard>
+
+            <Loader :overlay="isLoading" />
+        </div>
+    </section>
 </template>
