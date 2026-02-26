@@ -30,20 +30,20 @@ export const vuetify = createVuetify({
         myTheme: {
         dark: false,
         colors: {
-            customPrimary: "#7d2447",
-            customPrimaryDark: "#6a1f3c",
-            customSecondary: "#41504d",
-            customTertiary: "#636569",
+            customPrimary: "#134556",
+            customPrimaryDark: "#134556",
+            customSecondary: "#1A2B2D",
+            customTertiary: "#7e9294",
             customSurface: "#f1f0f0",
-            customMuted: "#bfb591",
+            customMuted: "#f1f0f0",
             customDark: "#0d0d0d",
         },
         },
         myDarkTheme: {
         dark: true,
         colors: {
-            customPrimary: "#41504d",
-            customSecondary: "#bfb591",
+            customPrimary: "#134556",
+            customSecondary: "#1A2B2D",
             customSurface: "#0d0d0d",
         },
         },

@@ -16,7 +16,7 @@ const drawer = ref(true);
 const rail = ref(false);
 
 const fullTitle = computed(() =>
-    title ? `${title} | laravel` : 'laravel'
+    title ? `${title}` : 'LARAVEL'
 );
 
 const clicStop = (displayMobile: boolean) => {
@@ -35,7 +35,7 @@ const clicStop = (displayMobile: boolean) => {
         <v-app>
             <Head :title="fullTitle" />
 
-            <TopBar :title="title ?? 'laravel'" @toggle-drawer="clicStop($vuetify.display.mobile)"></TopBar>
+            <TopBar :title="title ?? 'LARAVEL'" @toggle-drawer="clicStop($vuetify.display.mobile)"></TopBar>
 
             <Navigation :rail="rail" v-model:drawer="drawer" />
 

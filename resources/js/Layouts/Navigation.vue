@@ -1,97 +1,154 @@
 <script setup lang="ts">
-import routes from '@/routing';
-import { Link, usePage } from '@inertiajs/vue3';
-import { onMounted, ref } from 'vue';
-const can = usePage().props.auth.permissions;
-const auth = usePage().props.auth;
-const drawer = defineModel('drawer');
-const props = defineProps<{
-    rail: boolean
-}>();
-const opened = ref<string[]>();
+import routes from '@/routing'
+import { Link, usePage } from '@inertiajs/vue3'
+import { onMounted, ref, computed } from 'vue'
+import { route } from 'ziggy-js'
 
-const existSomeRoute = (routeNames: any): boolean => {
-    // return routeNames.some((routeName) => can.includes(routeName));
-    if (routeNames instanceof Array) {
-        return routeNames.some((routeName) => can.includes(routeName));
-    } else {
-        return can.includes(routeNames);
+type AuthUser = {
+    name: string
+    email: string
+}
+
+type PageProps = {
+    auth: {
+        user: AuthUser
+        permissions: string[]
     }
-};
+}
+
+const page = usePage<PageProps>()
+
+const can = page.props.auth.permissions
+const auth = page.props.auth
+
+const drawer = defineModel('drawer')
+
+const props = defineProps<{ rail: boolean }>()
+
+const opened = ref<string[]>()
+
+const existSomeRoute = (routeNames: string | string[]): boolean => {
+    return Array.isArray(routeNames)
+        ? routeNames.some((r) => can.includes(r))
+        : can.includes(routeNames)
+}
+
+const isActiveRoute = (name: string | string[]) => {
+    return Array.isArray(name)
+        ? route().current(name[0])
+        : route().current(name)
+}
+
 onMounted(() => {
-    // if can includes routeNames
-
-    opened.value = routes.filter((ruta) => ruta.groupItems?.find((groupItem) => route().current(groupItem.name)))?.map((ruta) => ruta.group) ?? [];
-    // Va a buscar la ruta activa para activar en el submenu la ruta activa
-    // opened.value = routes.find((ruta) => ruta.groupItems?.find((groupItem) => route().current(groupItem.name)))?.group ?? '';
-});
+    opened.value =
+        routes
+            .filter((ruta) => ruta.groupItems?.some((gi) => route().current(gi.name)))
+            .map((ruta) => ruta.group) ?? []
+})
 </script>
-<template>
-    <!-- <v-navigation-drawer :v-model="drawer" :location="$vuetify.display.mobile ? 'left' : undefined" :permanent="rail"
-        :rail="!props.rail" theme="dark"> -->
-    <v-navigation-drawer :v-model="drawer" :location="$vuetify.display.mobile ? 'left' : undefined" :permanent="rail"
-        :rail="$vuetify.display.mobile ? !props.rail : props.rail" theme="myDarkTheme" class="font-poppins bg-customPrimary">
-        <!-- <v-list-item prepend-avatar="https://randomuser.me/api/portraits/men/85.jpg" title="John Leider" nav>
 
-        </v-list-item> -->
-        <v-list>
-            <!-- <v-list-item
-            prepend-avatar="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRBwLejVDAf9IY2KE4F_YNld_QLNP0TuEw6CkzWkaPWbi-OWwmyJJfBvwgvVkEYG2WEGGU&usqp=CAU"
-            :subtitle="auth.user.email"
-            :title="auth.user.name"
-          ></v-list-item> -->
-            <!-- <v-list-item :prepend-avatar="/assets/images/Logo-icon.png" :subtitle="auth.user.email" -->
-            <v-list-item class="py-2 bg-customThird" prepend-avatar="https://randomuser.me/api/portraits/men/85.jpg"  :subtitle="auth.user.email"
-                :title="auth.user.name"></v-list-item>
-        </v-list>
-        <!-- {{ can }} -->
-        <v-divider></v-divider>
-        <v-list class="bg-[url(/assets/images/Logo.png)]" open-strategy="multiple" :opened="opened" @update:opened="newOpened => {
-            opened = newOpened;
-        }" density="comfortable" nav>
+<template>
+    <v-navigation-drawer
+        :v-model="drawer"
+        :location="$vuetify.display.mobile ? 'left' : undefined"
+        :permanent="rail"
+        :rail="$vuetify.display.mobile ? !props.rail : props.rail"
+        class="font-poppins bg-customSurface"
+    >
+        <v-list
+            class="bg-[url(/assets/images/Logo.png)]"
+            open-strategy="multiple"
+            :opened="opened"
+            @update:opened="newOpened => { opened = newOpened; }"
+            density="compact"
+            nav
+        >
             <div v-for="ruta in routes" :key="ruta.value">
-                <!-- {{ existSomeRoute(ruta.name) }} -->
                 <div v-if="ruta.group == null">
-                    <Link v-if="existSomeRoute(ruta.name)" :href="route(ruta.name)" preserve-scroll>
-                    <v-list-item elevation="0" variant="elevated"  rounded="pill"
-                         :title="ruta.title"
-                        active-color="customSecondary"
-                        base-color="customPrimary"
-                        :active="ruta.name instanceof Array ? route().current(ruta.name[0]) : route().current(ruta.name)">
-                        <template #prepend>
-                            <v-icon :icon="ruta.icon"></v-icon>
-                        </template>
-                        <!-- :active="route().current(ruta.name)" :prepend-icon="ruta.icon" :title="ruta.title"> -->
-                        <!-- is open -->
-                    </v-list-item>
+                    <!-- <Link v-if="existSomeRoute(ruta.name)" :href="route(Array.isArray(ruta.name) ? ruta.name[0] : ruta.name)" preserve-scroll> -->
+                    <Link :href="route(Array.isArray(ruta.name) ? ruta.name[0] : ruta.name)" preserve-scroll>
+                        <v-list-item
+                            elevation="0"
+                            variant="flat"
+                            density="compact"
+                            :title="ruta.title"
+                            :active="isActiveRoute(ruta.name)"
+                            active-class="nav-item-active"
+                            :class="[
+                                'rounded-lg transition-all',
+                                isActiveRoute(ruta.name)
+                                    ? 'shadow-sm'
+                                    : 'hover:bg-black/5 dark:hover:bg-white/5'
+                            ]"
+                        >
+                            <template #prepend>
+                                <v-icon :icon="ruta.icon"></v-icon>
+                            </template>
+                        </v-list-item>
                     </Link>
                 </div>
+
                 <div v-else>
-                    <!-- <v-list-group v-if="can.includes()" fluid :value="ruta.group"> -->
-                    <!-- <v-list-group v-if="can.includes(ruta.name)" :value="ruta.group" fluid> -->
-                    <v-list-group v-if="existSomeRoute(ruta.name)" :value="ruta.group" fluid>
-                        <!-- {{ existSomeRoute(ruta.name) ? "Existe" : "no" }} -->
-                        <template v-slot:activator="{ props, isOpen }">
-                            <v-list-item color="customSecondary" v-bind="props" :title="ruta.title" :prepend-icon="ruta.icon"
-                                </v-list-item>
+                    <!-- <v-list-group v-if="existSomeRoute(ruta.name)" :value="ruta.group" fluid> -->
+                    <v-list-group :value="ruta.group" fluid :active="false">
+                        <template v-slot:activator="{ props: groupProps }">
+                            <v-list-item
+                                v-bind="groupProps"
+                                :title="ruta.title"
+                                :prepend-icon="ruta.icon"
+                                class="rounded-lg"
+                            ></v-list-item>
                         </template>
-                        <Link v-for="groupItem in ruta.groupItems" :key="groupItem.value" :href="route(groupItem.name)" preserve-scroll>
-                        <v-list-item elevation="0 ml-2" v-if="can.includes(groupItem.name)" variant="elevated" color="customSecondary"
-                            rounded="pill" :active="route().current(groupItem.name)" :prepend-icon="groupItem.icon"
-                            :title="groupItem.title" active-color="customSecondary" base-color="customPrimary">
-                            <!-- -->
-                        </v-list-item>
+
+                        <Link
+                            v-for="groupItem in ruta.groupItems"
+                            :key="groupItem.value"
+                            :href="route(groupItem.name)"
+                            preserve-scroll
+                        >
+                            <!-- v-if="can.includes(groupItem.name)" -->
+                            <v-list-item
+                                elevation="0"
+                                variant="flat"
+                                :active="route().current(groupItem.name)"
+                                active-class="nav-item-active"
+                                :prepend-icon="groupItem.icon"
+                                :title="groupItem.title"
+                                rounded="lg"
+                                class="ml-2 transition-all rounded-lg"
+                                :class="[
+                                    route().current(groupItem.name)
+                                        ? 'shadow-xl hover:shadow-2xl'
+                                        : 'hover:shadow-2xl'
+                                ]"
+                            >
+                            </v-list-item>
                         </Link>
                     </v-list-group>
                 </div>
             </div>
-            <Link :href="route('logout')" method="post" as="button" class="flex items-start justify-start w-full bg-customPrimary">
-            <v-list-item elevation="0" variant="elevated" base-color="customPrimary" rounded="pill"
-                :active="route().current('logout')" prepend-icon="mdi-logout" title="Cerrar Sesión">
-                <!-- -->
-            </v-list-item>
-            </Link>
         </v-list>
-        <!-- {{ can }} -->
     </v-navigation-drawer>
 </template>
+
+<style scoped>
+.v-list-item {
+    background-color: rgb(var(--v-theme-customSurface));
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+
+.v-list-item:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+    background-color: rgba(var(--v-theme-customPrimary), 0.08);
+}
+
+.nav-item-active {
+    background-color: rgb(var(--v-theme-customPrimary));
+    color: rgb(var(--v-theme-customSurface));
+}
+
+.nav-item-active :deep(.v-icon) {
+    color: currentColor !important;
+}
+</style>
